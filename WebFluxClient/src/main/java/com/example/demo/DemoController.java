@@ -1,11 +1,7 @@
 package com.example.demo;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelOption;
-import io.netty.handler.codec.string.StringEncoder;
 import jakarta.annotation.PostConstruct;
-import org.reactivestreams.Publisher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,10 +9,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 import reactor.netty.tcp.TcpClient;
-
-import java.time.Duration;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @RestController
 public class DemoController {
@@ -40,7 +32,10 @@ public class DemoController {
     public Mono<String> search(@RequestParam String value) {
 
 
-        return stringFlux.next();
+        return stringFlux.filter(s -> {
+
+            return s.contains(value);
+        }).next();
 
     }
 
