@@ -29,7 +29,8 @@ public class DemoConnectionConfig {
                             .receive()
                             .asByteArray()
                             .cache(0)
-                            .subscribe(value -> repository.save((String) SerializationUtils.deserialize(value)));
+                            .subscribe(repository::save);
+
                     return nettyOutbound.neverComplete();
                 })
                 .connectNow();
