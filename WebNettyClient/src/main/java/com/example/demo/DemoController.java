@@ -18,13 +18,16 @@ class DemoController {
 
 
     @GetMapping("/echo")
-    public String echo(@RequestParam String value) throws ExecutionException, InterruptedException {
-        return service.sendAndGet(value).get();
+    public byte[] echo(@RequestParam String value) throws ExecutionException, InterruptedException {
+        byte[] bytes = service
+                .sendAndGet(value)
+                .get();
+        return bytes;
     }
 
     @GetMapping("/list")
-    public List<String> getList() {
-        return service.getStringList();
+    public List<byte[]> getList() {
+        return service.getBytes();
     }
 
 }
