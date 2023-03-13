@@ -8,13 +8,13 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Repository
 public class DemoRepository {
 
-    private final List<String> stringList = new CopyOnWriteArrayList<>();
+    private final List<byte[]> bytes = new CopyOnWriteArrayList<>();
 
-    public void save(String value) {
-        stringList.add(value);
+    public void save(byte[] value) {
+        bytes.add(value);
     }
 
-    public List<String> getStringList() {
-        return stringList;
+    public List<byte[]> getBytes() {
+        return bytes;
     }
 }
