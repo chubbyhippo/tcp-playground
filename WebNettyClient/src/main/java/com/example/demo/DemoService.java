@@ -1,14 +1,11 @@
 package com.example.demo;
 
-import io.netty.handler.codec.serialization.ObjectEncoder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.util.SerializationUtils;
 import reactor.core.publisher.Mono;
 import reactor.netty.Connection;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -24,28 +21,30 @@ public class DemoService {
 
     public void send(String value) {
 
+        byte[] bytes = value.getBytes();
+
         connection.outbound()
-//                .sendByteArray(Mono.just(value.getBytes()))
-                .sendByteArray(Mono.just(Objects.requireNonNull(SerializationUtils.serialize(value))))
+                .sendByteArray(Mono.just(bytes))
                 .then()
                 .subscribe();
     }
 
-    public List<String> getStringList() {
-        return repository.getStringList();
+    public List<byte[]> getBytes() {
+        return repository.getBytes();
     }
 
     @Async
-    public CompletableFuture<String> sendAndGet(String value) {
+    public CompletableFuture<byte[]> sendAndGet(String value) {
         send(value);
         while (true) {
-            var result = repository.getStringList()
-                    .stream().filter(s -> s.equals(value))
+            var result = repository.getBytes()
+//                    .stream().filter(s -> s.equals(value))
+                    .stream()
                     .findFirst();
 
 
             if (result.isPresent()) {
-                repository.getStringList().removeIf(s -> s.equals(value));
+//                repository.getStringList().removeIf(s -> s.equals(value));
                 return CompletableFuture.completedFuture(result.get());
             }
 
