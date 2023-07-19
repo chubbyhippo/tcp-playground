@@ -1,0 +1,7 @@
+tcp:
+  server:
+    host: localhost
+    port: 9876
+  client:
+    connection:
+      pool-size: 1

@@ -15,6 +15,7 @@ public class DemoController {
 
     private Connection connection;
     private Flux<String> stringFlux;
+    private Mono<String> stringMono;
 
     @GetMapping("/echo")
     public Mono<String> echo(@RequestParam String value) {
@@ -24,7 +25,8 @@ public class DemoController {
                 .then()
                 .subscribe();
 
-        return stringFlux.as(Mono::from);
+        return connection.inbound().receive().asString().cache(0).as(Mono::from);
+
 
     }
 
@@ -61,10 +63,6 @@ public class DemoController {
                 .wiretap(true)
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
                 .option(ChannelOption.SO_KEEPALIVE, true)
-                .handle((nettyInbound, nettyOutbound) -> {
-                    stringFlux = nettyInbound.receive().asString().cache(0);
-                    return nettyOutbound.neverComplete();
-                })
                 .connectNow();
     }
 }
