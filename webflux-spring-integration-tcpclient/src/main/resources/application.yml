@@ -5,3 +5,8 @@ tcp:
   client:
     connection:
       pool-size: 1
+logging:
+  level:
+    org:
+      springframework:
+        integration: debug

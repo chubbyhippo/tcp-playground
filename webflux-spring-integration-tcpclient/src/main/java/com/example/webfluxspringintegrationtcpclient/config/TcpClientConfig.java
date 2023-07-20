@@ -9,6 +9,7 @@ import org.springframework.integration.ip.tcp.TcpOutboundGateway;
 import org.springframework.integration.ip.tcp.connection.AbstractClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.CachingClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.TcpNioClientConnectionFactory;
+import org.springframework.integration.ip.tcp.serializer.*;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
@@ -24,20 +25,21 @@ public class TcpClientConfig {
     private int connectionPoolSize;
 
     @Bean
-    public AbstractClientConnectionFactory clientConnectionFactory() {
+    AbstractClientConnectionFactory clientConnectionFactory() {
         TcpNioClientConnectionFactory tcpNioClientConnectionFactory = new TcpNioClientConnectionFactory(host, port);
-        tcpNioClientConnectionFactory.setUsingDirectBuffers(true);
+        tcpNioClientConnectionFactory.setUsingDirectBuffers(false);
+        tcpNioClientConnectionFactory.setSerializer(new ByteArrayRawSerializer());
         return new CachingClientConnectionFactory(tcpNioClientConnectionFactory, connectionPoolSize);
     }
 
     @Bean
-    public MessageChannel outboundChannel() {
+    MessageChannel outboundChannel() {
         return new DirectChannel();
     }
 
     @Bean
     @ServiceActivator(inputChannel = "outboundChannel")
-    public MessageHandler outboundGateway(AbstractClientConnectionFactory clientConnectionFactory) {
+    MessageHandler outboundGateway(AbstractClientConnectionFactory clientConnectionFactory) {
         TcpOutboundGateway tcpOutboundGateway = new TcpOutboundGateway();
         tcpOutboundGateway.setConnectionFactory(clientConnectionFactory);
         return tcpOutboundGateway;
